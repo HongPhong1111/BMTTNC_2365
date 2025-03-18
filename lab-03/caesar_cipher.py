@@ -8,20 +8,20 @@ class MyApp(QMainWindow):
         super().__init__()
         self.ui = Ui_MainWindow()
         self.ui.setupUi(self)
-        self.ui.btn_encrypt.clicked.connect(self.call_api_encrypt)
-        self.ui.btn_decrypt.clicked.connect(self.call_api_decrypt)
+        self.ui.bt_encrypt.clicked.connect(self.call_api_encrypt)  # Tên button đúng
+        self.ui.bt_decrypt.clicked.connect(self.call_api_decrypt)  # Tên button đúng
 
     def call_api_encrypt(self):
-        url = "http://127.0.0.1:5001/api/caesar/encrypt"
+        url = "http://127.0.0.1:5000/api/caesar/encrypt"
         payload = {
-            "plain_text": self.ui.txt_plain_text.toPlainText(),
-            "key": self.ui.txt_key.text()
+            "plain_text": self.ui.txt_plaintext.toPlainText(),  # Sửa tên trường ở đây
+            "key": self.ui.txt_key.toPlainText()  # Thay .text() thành .toPlainText() ở đây
         }
         try:
             response = requests.post(url, json=payload)
             if response.status_code == 200:
                 data = response.json()
-                self.ui.txt_cipher_text.setText(data["encrypted_message"])
+                self.ui.txt_ciphertext.setText(data["encrypted_message"])  # Sửa tên trường ở đây
                 msg = QMessageBox()
                 msg.setIcon(QMessageBox.Information)
                 msg.setText("Encrypted Successfully")
@@ -32,17 +32,16 @@ class MyApp(QMainWindow):
             print("Error: %s" % str(e))
 
     def call_api_decrypt(self):
-        url = "http://127.0.0.1:5001/api/caesar/decrypt"
+        url = "http://127.0.0.1:5000/api/caesar/decrypt"
         payload = {
-            "cipher_text": self.ui.txt_cipher_text.toPlainText(),
-            "key": self.ui.txt_key.text()
+            "cipher_text": self.ui.txt_ciphertext.toPlainText(),  # Sửa tên trường ở đây
+            "key": self.ui.txt_key.toPlainText()  # Thay .text() thành .toPlainText() ở đây vì txt_key là một QTextEdit và bạn cần sử dụng phương thức toPlainText() để lấy nội dung.
         }
         try:
             response = requests.post(url, json=payload)
             if response.status_code == 200:
                 data = response.json()
-                self.ui.txt_plain_text.setText(data["decrypted_message"])
-
+                self.ui.txt_plaintext.setText(data["decrypted_message"])  # Sửa tên trường ở đây
                 msg = QMessageBox()
                 msg.setIcon(QMessageBox.Information)
                 msg.setText("Decrypted Successfully")
@@ -50,7 +49,7 @@ class MyApp(QMainWindow):
             else:
                 print("Error while calling API")
         except requests.exceptions.RequestException as e:
-            print("Error: %s" % str(e))
+            print("Error: %s" % e.message)
 
 if __name__ == "__main__":
     app = QApplication(sys.argv)
